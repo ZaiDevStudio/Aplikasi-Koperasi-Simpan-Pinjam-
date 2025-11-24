@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Nasabah</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gold-theme">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Data Nasabah</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-5 mb-5">
+        <div class="row mb-3">
+            <div class="col-md-6"><input type="text" id="searchInput" class="form-control" placeholder="Cari Nasabah..."></div>
+            <div class="col-md-6 text-end mt-2 mt-md-0">
+                <button onclick="exportExcel('tabelNasabah', 'Data_Nasabah')" class="btn btn-success btn-sm"><i class="fas fa-file-excel"></i> Excel</button>
+                <button onclick="exportPDF('areaData', 'Data_Nasabah')" class="btn btn-danger btn-sm"><i class="fas fa-file-pdf"></i> PDF</button>
+                <button onclick="clearData('nasabahData')" class="btn btn-dark btn-sm"><i class="fas fa-trash"></i> Hapus Semua</button>
+            </div>
+        </div>
+
+        <div id="areaData" class="table-responsive shadow">
+            <table class="table table-hover table-striped" id="tabelNasabah">
+                <thead>
+                    <tr>
+                        <th>No</th><th>Nama</th><th>Usaha</th><th>Tempat</th><th>Alamat</th><th>HP</th><th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyNasabah"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>@2025 Koperasi Simpan Pinjam. Developer Y. Zai, A.Md.Kom</footer>
+    <script src="script.js"></script>
+    <script>
+        function renderTable(data = getDB('nasabahData')) {
+            const tbody = document.getElementById('tbodyNasabah');
+            tbody.innerHTML = '';
+            data.forEach((item, i) => {
+                let tr = `<tr>
+                    <td>${i+1}</td>
+                    <td>${item.nama}</td>
+                    <td>${item.usaha}</td>
+                    <td>${item.tempatUsaha}</td>
+                    <td>${item.alamat}</td>
+                    <td>${item.hp}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="hapusNasabah(${item.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += tr;
+            });
+        }
+
+        function hapusNasabah(id) {
+            if(confirm('Hapus data ini?')) {
+                let data = getDB('nasabahData').filter(x => x.id !== id);
+                setDB('nasabahData', data);
+                renderTable();
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let val = this.value.toLowerCase();
+            let filtered = getDB('nasabahData').filter(x => x.nama.toLowerCase().includes(val));
+            renderTable(filtered);
+        });
+
+        renderTable();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Rekapan Saldo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-blue-theme" style="background-color: #e3f2fd;"> <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" style="background: #0d6efd !important;">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Rekapan Saldo</a>
+            <div class="ms-auto"><a href="index.html" class="text-white"><i class="fas fa-home"></i></a></div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-5" id="areaLaporan">
+        <h3 class="text-center text-primary mb-4 fw-bold">Laporan Keuangan</h3>
+        
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="card bg-warning text-dark p-3 shadow h-100">
+                    <h5>Total Dipinjamkan</h5>
+                    <h2 class="fw-bold" id="totalPinjam">Rp 0</h2>
+                    <small>Total pokok + jasa awal</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white p-3 shadow h-100">
+                    <h5>Total Lunas/Dibayar</h5>
+                    <h2 class="fw-bold" id="totalDibayar">Rp 0</h2>
+                    <small>Uang yang sudah masuk kembali</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white p-3 shadow h-100">
+                    <h5>Total Tabungan Nasabah</h5>
+                    <h2 class="fw-bold" id="totalTabungan">Rp 0</h2>
+                    <small>Uang nasabah yang disimpan</small>
+                </div>
+            </div>
+             <div class="col-md-12">
+                <div class="card bg-danger text-white p-3 shadow">
+                    <h5>Sisa Piutang (Outstanding)</h5>
+                    <h2 class="fw-bold" id="totalPiutang">Rp 0</h2>
+                    <small>Uang yang masih di luar (Belum dibayar nasabah)</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <button onclick="exportPDF('areaLaporan', 'Laporan_Saldo')" class="btn btn-outline-primary">Download Laporan PDF</button>
+        </div>
+    </div>
+
+    <footer class="bg-primary">@2025 Koperasi Simpan Pinjam. Developer Y. Zai, A.Md.Kom</footer>
+
+    <script src="script.js"></script>
+    <script>
+        const pinjaman = getDB('pinjamanDB');
+        const tabungan = getDB('tabunganDB');
+
+        let totalPinjam = pinjaman.reduce((sum, item) => sum + item.totalBayar, 0);
+        let totalPiutang = pinjaman.reduce((sum, item) => sum + item.sisaSaldo, 0);
+        let totalDibayar = totalPinjam - totalPiutang;
+        let totalTab = tabungan.reduce((sum, item) => sum + item.total, 0);
+
+        document.getElementById('totalPinjam').innerText = formatRupiah(totalPinjam);
+        document.getElementById('totalDibayar').innerText = formatRupiah(totalDibayar);
+        document.getElementById('totalPiutang').innerText = formatRupiah(totalPiutang);
+        document.getElementById('totalTabungan').innerText = formatRupiah(totalTab);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
